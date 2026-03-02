@@ -2,7 +2,7 @@ const pool = require('../config/database');
 
 const placeOrder = async (req, res) => {
   const { items, delivery_time, payment_method, total_amount } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.id || req.user.userId;
 
   if (!items || !delivery_time || !payment_method || !total_amount) {
     return res.status(400).json({ message: 'All fields are required' });
@@ -11,7 +11,7 @@ const placeOrder = async (req, res) => {
   try {
     const orderId = 'MB' + Date.now();
 
-    const [result] = await pool.execute(
+    await pool.execute(
       `INSERT INTO orders 
        (order_id, user_id, items, delivery_time, payment_method, total_amount, status) 
        VALUES (?, ?, ?, ?, ?, ?, 'confirmed')`,
@@ -32,7 +32,7 @@ const placeOrder = async (req, res) => {
 };
 
 const getOrders = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user.id || req.user.userId;
 
   try {
     const [orders] = await pool.execute(
@@ -47,4 +47,3 @@ const getOrders = async (req, res) => {
 };
 
 module.exports = { placeOrder, getOrders };
- 
