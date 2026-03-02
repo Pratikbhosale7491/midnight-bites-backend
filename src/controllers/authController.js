@@ -31,7 +31,7 @@ const register = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    res.status(201).json({ 
+    res.status(201).json({
       message: 'Registered successfully!',
       token,
       user: { id: result.insertId, email, phone, hostel_block }
@@ -67,12 +67,12 @@ const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { userId: user.id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN }
+      { expiresIn: '7d' }  // ← hardcode this
     );
 
-    res.json({ 
+    res.json({
       message: 'Login successful!',
       token,
       user: { id: user.id, email: user.email, hostel_block: user.hostel_block }
