@@ -84,4 +84,24 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const getMe = async (req, res) => {
+  const userId = req.user.id || req.user.userId;
+  
+  try {
+    const [users] = await pool.execute(
+      'SELECT id, email, phone, hostel_block, created_at FROM users WHERE id = ?',
+      [userId]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(users[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch profile' });
+  }
+};
+
+module.exports = { register, login, getMe };
